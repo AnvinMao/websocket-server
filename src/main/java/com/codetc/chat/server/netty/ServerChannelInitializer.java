@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -22,6 +23,9 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     @Autowired
     private RequestAuthHandler requestAuthHandler;
 
+    @Value("${server.websocket.path}")
+    private String webSocketPath;
+
     @Override
     protected void initChannel(SocketChannel socketChannel) throws Exception {
         ChannelPipeline pipeline = socketChannel.pipeline();
@@ -29,7 +33,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
         pipeline.addLast(new HttpObjectAggregator(65536));
         pipeline.addLast(requestAuthHandler);
         pipeline.addLast(new IdleStateHandler(60, 0, 0));
-        pipeline.addLast(new WebSocketServerProtocolHandler("/chat", true));
+        pipeline.addLast(new WebSocketServerProtocolHandler(webSocketPath, true));
         pipeline.addLast(webSocketFrameHandler);
     }
 }
