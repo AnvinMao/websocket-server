@@ -66,6 +66,12 @@ public class RequestAuthHandler extends SimpleChannelInboundHandler<FullHttpRequ
         ctx.fireChannelRead(request.retain());
     }
 
+    /**
+     * 验证连接 Token， 从Token中获取登录用户信息
+     * @param token
+     * @param ctx
+     * @return boolean
+     */
     private boolean authToken(String token, ChannelHandlerContext ctx) {
         try {
             String jsonData = CryptoHelper.decryptWithAes(this.authPassword, token);
