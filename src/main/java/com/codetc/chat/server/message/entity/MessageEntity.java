@@ -24,7 +24,16 @@ public class MessageEntity implements Serializable {
     private String message;
 
     @Indexed
-    private Long time;
+    private long time;
+
+    public MessageEntity(long senderId, String senderName, long receiverId, String receiverName, String message, long time) {
+        this.senderId = senderId;
+        this.senderName = senderName;
+        this.receiverId = receiverId;
+        this.receiverName = receiverName;
+        this.message = message;
+        this.time = time;
+    }
 
     public void setSenderId(long senderId) {
         this.senderId = senderId;
@@ -66,11 +75,11 @@ public class MessageEntity implements Serializable {
         this.message = message;
     }
 
-    public Long getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(Long time) {
+    public void setTime(long time) {
         this.time = time;
     }
 }

@@ -7,7 +7,8 @@ public class Message {
     private int type;
     private int page;
     private int receiverId;
-    private MessageEntity info;
+    private String receiverName;
+    private String message;
 
     public void setType(int type) {
         this.type = type;
@@ -33,11 +34,19 @@ public class Message {
         return receiverId;
     }
 
-    public void setInfo(MessageEntity info) {
-        this.info = info;
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
     }
 
-    public MessageEntity getInfo() {
-        return info;
+    public String getReceiverName() {
+        return this.receiverName;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

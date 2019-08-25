@@ -25,11 +25,16 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<MessageEntity> getMessage(long senderId, long receiverId, int limit, int skip) {
+        Criteria criteria1 = new Criteria().andOperator(
+                Criteria.where("senderId").is(senderId),
+                Criteria.where("receiverId").is(receiverId));
+
+        Criteria criteria2 = new Criteria().andOperator(
+                Criteria.where("senderId").is(receiverId),
+                Criteria.where("receiverId").is(senderId));
+
         Query query = new Query();
-        query.addCriteria(
-                new Criteria().andOperator(
-                        Criteria.where("senderId").is(senderId),
-                        Criteria.where("receiverId").is(receiverId)));
+        query.addCriteria(new Criteria().orOperator(criteria1, criteria2));
         query.with(new Sort(Sort.Direction.DESC, "time"));
         query.limit(limit).skip(skip);
 
