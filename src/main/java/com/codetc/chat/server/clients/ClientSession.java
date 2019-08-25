@@ -1,16 +1,17 @@
 package com.codetc.chat.server.clients;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 
 /**
  * Created by anvin 2019-08-20
  */
-public class Client {
+public class ClientSession {
     private long id;
     private String nickname;
     private ChannelHandlerContext ctx;
 
-    public Client(long id, String nickname, ChannelHandlerContext ctx) {
+    public ClientSession(long id, String nickname, ChannelHandlerContext ctx) {
         this.id = id;
         this.nickname = nickname;
         this.ctx = ctx;
@@ -26,6 +27,14 @@ public class Client {
 
     public ChannelHandlerContext getCtx() {
         return ctx;
+    }
+
+    public void sendMessage(String message) {
+        if (this.ctx == null) {
+            return;
+        }
+
+        this.ctx.channel().writeAndFlush(new TextWebSocketFrame(message));
     }
 
     @Override

@@ -1,10 +1,11 @@
 package com.codetc.chat.server.message;
 
-import com.codetc.chat.server.clients.Client;
+import com.codetc.chat.server.clients.ClientSession;
 import com.codetc.chat.server.clients.ClientService;
 import com.codetc.chat.server.message.entity.Message;
 import com.codetc.chat.server.message.entity.MessageEntity;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,15 +40,11 @@ public class MessageHandlerImpl implements MessageHandler {
         Message message;
         try {
             message = this.gson.fromJson(msg, Message.class);
-        } catch (Exception e) {
-            log.error("Invalid message: {}", msg);
+        } catch (JsonSyntaxException e) {
             return;
         }
 
         switch (message.getType()) {
-            case MessageType.HEART_BEAT:        //心跳
-                // do nothing
-                break;
             case MessageType.HISTORY_MESSAGE:   //获取聊天记录
                 this.historyMessage(ctx, message);
                 break;
@@ -65,7 +62,7 @@ public class MessageHandlerImpl implements MessageHandler {
             return;
         }
 
-        Client sender = this.clientService.getClient(ctx);
+        ClientSession sender = this.clientService.getClient(ctx);
         if (sender == null) {
             this.clientService.removeClient(ctx);
             return;
@@ -80,9 +77,9 @@ public class MessageHandlerImpl implements MessageHandler {
                 System.currentTimeMillis());
         this.messageService.saveMessage(entity);
 
-        Client receiver = this.clientService.getClient(message.getReceiverId());
+        ClientSession receiver = this.clientService.getClient(message.getReceiverId());
         if (receiver != null) {
-            receiver.getCtx().writeAndFlush(this.gson.toJson(entity));
+            receiver.sendMessage(this.gson.toJson(entity));
         }
     }
 
@@ -92,7 +89,7 @@ public class MessageHandlerImpl implements MessageHandler {
             return;
         }
 
-        Client client = this.clientService.getClient(ctx);
+        ClientSession client = this.clientService.getClient(ctx);
         if (client == null) {
             this.clientService.removeClient(ctx);
             return;
@@ -105,6 +102,7 @@ public class MessageHandlerImpl implements MessageHandler {
                 message.getReceiverId(),
                 this.messagePageSize,
                 skip);
-        client.getCtx().writeAndFlush(this.gson.toJson(list));
+
+        client.sendMessage(this.gson.toJson(list));
     }
 }

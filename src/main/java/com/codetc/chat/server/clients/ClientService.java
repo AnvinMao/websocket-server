@@ -7,11 +7,11 @@ import io.netty.channel.ChannelHandlerContext;
  */
 public interface ClientService {
 
-    void addClient(Client client);
+    void addClient(ClientSession client);
 
     void removeClient(ChannelHandlerContext ctx);
 
-    Client getClient(long id);
+    ClientSession getClient(long id);
 
-    Client getClient(ChannelHandlerContext ctx);
+    ClientSession getClient(ChannelHandlerContext ctx);
 }

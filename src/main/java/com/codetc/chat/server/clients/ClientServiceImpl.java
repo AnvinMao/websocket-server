@@ -12,10 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ClientServiceImpl implements ClientService {
 
-    private final Map<Long, Client> clients = new ConcurrentHashMap<>();
+    private final Map<Long, ClientSession> clients = new ConcurrentHashMap<>();
 
     @Override
-    public void addClient(Client client) {
+    public void addClient(ClientSession client) {
         this.clients.put(client.getId(), client);
     }
 
@@ -24,16 +24,17 @@ public class ClientServiceImpl implements ClientService {
         this.clients.entrySet().removeIf(entry ->
                 entry.getValue().getCtx().channel().id().equals(ctx.channel().id()));
         ctx.close();
+        System.out.println("remove client:" + this.clients.size());
     }
 
     @Override
-    public Client getClient(long id) {
+    public ClientSession getClient(long id) {
         return this.clients.get(id);
     }
 
     @Override
-    public Client getClient(ChannelHandlerContext ctx) {
-        for (Map.Entry<Long, Client> entry : this.clients.entrySet()) {
+    public ClientSession getClient(ChannelHandlerContext ctx) {
+        for (Map.Entry<Long, ClientSession> entry : this.clients.entrySet()) {
             if (entry.getValue().getCtx().channel().id().equals(ctx.channel().id())) {
                 return entry.getValue();
             }

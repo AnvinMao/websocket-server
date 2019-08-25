@@ -43,8 +43,10 @@ public class WebsocketServer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } finally {
-            workerGroup.shutdownGracefully();
-            bossGroup.shutdownGracefully();
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                workerGroup.shutdownGracefully();
+                bossGroup.shutdownGracefully();
+            }));
         }
     }
 }

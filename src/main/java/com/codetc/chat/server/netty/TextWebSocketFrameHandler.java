@@ -26,12 +26,12 @@ public class TextWebSocketFrameHandler extends SimpleChannelInboundHandler<TextW
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame frame) throws Exception {
-        String msg = frame.text();
-        if (msg.isEmpty()) {
+        String message = frame.text();
+        if (message.isEmpty()) {
             return;
         }
 
-        this.messageHandler.handler(ctx, msg);
+        this.messageHandler.handler(ctx, message);
     }
 
     @Override

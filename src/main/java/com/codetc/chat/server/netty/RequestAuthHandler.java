@@ -1,6 +1,6 @@
 package com.codetc.chat.server.netty;
 
-import com.codetc.chat.server.clients.Client;
+import com.codetc.chat.server.clients.ClientSession;
 import com.codetc.chat.server.clients.ClientService;
 import com.codetc.chat.server.clients.ClientToken;
 import com.codetc.chat.server.utils.CryptoHelper;
@@ -77,7 +77,7 @@ public class RequestAuthHandler extends SimpleChannelInboundHandler<FullHttpRequ
             String jsonData = CryptoHelper.decryptWithAes(this.authPassword, token);
             ClientToken data = this.gson.fromJson(jsonData, ClientToken.class);
             if (data.getExpired() > System.currentTimeMillis()) {
-                Client client = new Client(data.getUserId(), data.getNickname(), ctx);
+                ClientSession client = new ClientSession(data.getUserId(), data.getNickname(), ctx);
                 this.clientService.addClient(client);
                 return true;
             }
